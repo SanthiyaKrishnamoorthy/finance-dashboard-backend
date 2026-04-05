@@ -4,7 +4,6 @@ const createTransaction = async (req, res) => {
   try {
     const { amount, type, category, date, description } = req.body;
     
-    // Validation
     if (!amount || amount <= 0) {
       return res.status(400).json({ error: 'Amount must be greater than 0' });
     }
@@ -22,7 +21,7 @@ const createTransaction = async (req, res) => {
     }
     
     const transaction = await Transaction.create({
-      amount,
+      amount: parseFloat(amount),
       type,
       category,
       date,
@@ -30,10 +29,7 @@ const createTransaction = async (req, res) => {
       user_id: req.user.id
     });
     
-    res.status(201).json({ 
-      message: 'Transaction created successfully', 
-      transaction 
-    });
+    res.status(201).json({ message: 'Transaction created successfully', transaction });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -49,19 +45,38 @@ const getTransactions = async (req, res) => {
       limit: req.query.limit
     };
     
-    // Remove undefined filters
     Object.keys(filters).forEach(key => 
       filters[key] === undefined && delete filters[key]
     );
     
     const transactions = await Transaction.list(filters);
-    res.json({ 
-      transactions, 
-      count: transactions.length,
-      filters 
-    });
+    res.json({ transactions, count: transactions.length, filters });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+const getTransaction = async (req, res) => {
+  try {
+    const transaction = await Transaction.findById(req.params.id);
+    if (!transaction) {
+      return res.status(404).json({ error: 'Transaction not found' });
+    }
+    res.json({ transaction });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const updateTransaction = async (req, res) => {
+  try {
+    const transaction = await Transaction.update(req.params.id, req.body);
+    if (!transaction) {
+      return res.status(404).json({ error: 'Transaction not found' });
+    }
+    res.json({ message: 'Transaction updated successfully', transaction });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -77,4 +92,10 @@ const deleteTransaction = async (req, res) => {
   }
 };
 
-module.exports = { createTransaction, getTransactions, deleteTransaction };
+module.exports = {
+  createTransaction,
+  getTransactions,
+  getTransaction,
+  updateTransaction,
+  deleteTransaction
+};

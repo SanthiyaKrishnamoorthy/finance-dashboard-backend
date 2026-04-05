@@ -4,6 +4,10 @@ const cors = require('cors');
 const { initializeDatabase } = require('./src/config/database');
 const errorHandler = require('./src/middleware/errorHandler');
 
+// Import Swagger
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpecs = require('./src/config/swagger');
+
 // Import routes
 const authRoutes = require('./src/routes/authRoutes');
 const transactionRoutes = require('./src/routes/transactionRoutes');
@@ -23,6 +27,19 @@ app.use((req, res, next) => {
   next();
 });
 
+// Swagger Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, {
+  explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'Finance API Documentation'
+}));
+
+// Raw swagger JSON endpoint
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpecs);
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ 
@@ -36,32 +53,14 @@ app.get('/health', (req, res) => {
 const startServer = async () => {
   try {
     await initializeDatabase();
+    
+    // Run seeder
     await require('./src/utils/seedData')();
     
-    // Routes - CHECK IF EACH ROUTE FILE EXISTS AND EXPORTS CORRECTLY
-    console.log('Checking routes...');
-    console.log('Auth routes:', typeof authRoutes);
-    console.log('Transaction routes:', typeof transactionRoutes);
-    console.log('Dashboard routes:', typeof dashboardRoutes);
-    
-    // Only use routes if they exist
-    if (authRoutes && typeof authRoutes === 'function') {
-      app.use('/api/auth', authRoutes);
-    } else {
-      console.log('⚠️ Auth routes not loaded properly');
-    }
-    
-    if (transactionRoutes && typeof transactionRoutes === 'function') {
-      app.use('/api/transactions', transactionRoutes);
-    } else {
-      console.log('⚠️ Transaction routes not loaded properly');
-    }
-    
-    if (dashboardRoutes && typeof dashboardRoutes === 'function') {
-      app.use('/api/dashboard', dashboardRoutes);
-    } else {
-      console.log('⚠️ Dashboard routes not loaded properly');
-    }
+    // Routes
+    app.use('/api/auth', authRoutes);
+    app.use('/api/transactions', transactionRoutes);
+    app.use('/api/dashboard', dashboardRoutes);
     
     // 404 handler
     app.use((req, res) => {
@@ -74,6 +73,7 @@ const startServer = async () => {
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
       console.log(`📊 Health check: http://localhost:${PORT}/health`);
+      console.log(`📚 API Docs: http://localhost:${PORT}/api-docs`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);
