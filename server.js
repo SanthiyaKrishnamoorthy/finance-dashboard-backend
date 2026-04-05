@@ -36,6 +36,7 @@ app.get('/health', (req, res) => {
 const startServer = async () => {
   try {
     await initializeDatabase();
+    await require('./src/utils/seedData')();
     
     // Routes - CHECK IF EACH ROUTE FILE EXISTS AND EXPORTS CORRECTLY
     console.log('Checking routes...');
