@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 # Finance Data Processing and Access Control Backend
 
 [![Node.js](https://img.shields.io/badge/Node.js-20.x-green)](https://nodejs.org/)
@@ -1016,4 +1014,4 @@ echo "NODE_ENV=development" >> .env
   <br />
   <sub>© 2024 Santhiya K. All rights reserved.</sub>
 </div>
->>>>>>> 986b56d4bdc7238b0951098d98bf8173c6cd7423
+
