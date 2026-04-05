@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Finance Dashboard</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: auto; }
+        .card { background: white; padding: 20px; margin: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .summary { display: flex; gap: 20px; }
+        .summary-item { flex: 1; text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        .income { color: green; }
+        .expense { color: red; }
+        input, button { padding: 10px; margin: 5px; }
+        button { background: #667eea; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        .error { color: red; padding: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Finance Dashboard</h1>
+        
+        <div class="card">
+            <h3>🔐 Login to View Dashboard</h3>
+            <input type="email" id="email" placeholder="Email" value="admin@example.com">
+            <input type="password" id="password" placeholder="Password" value="admin123">
+            <button onclick="login()">Login</button>
+            <div id="loginStatus"></div>
+        </div>
+
+        <div id="dashboard" style="display:none;">
+            <div class="summary" id="summary"></div>
+            
+            <div class="card">
+                <h3>📈 Category Breakdown</h3>
+                <table id="categories">
+                    <tr><th>Type</th><th>Category</th><th>Total</th><th>Count</th></tr>
+                </table>
+            </div>
+            
+            <div class="card">
+                <h3>🕒 Recent Activity</h3>
+                <table id="recent">
+                    <tr><th>Date</th><th>Type</th><th>Category</th><th>Amount</th><th>Description</th></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let token = '';
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    token = data.token;
+                    document.getElementById('loginStatus').innerHTML = '<p style="color:green">✅ Login successful! Loading dashboard...</p>';
+                    loadDashboard();
+                } else {
+                    document.getElementById('loginStatus').innerHTML = `<p style="color:red">❌ Login failed: ${data.error}</p>`;
+                }
+            } catch (error) {
+                document.getElementById('loginStatus').innerHTML = `<p style="color:red">❌ Error: ${error.message}</p>`;
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch('http://localhost:3000/api/dashboard', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('dashboard').style.display = 'block';
+                    
+                    // Display summary
+                    const summaryHtml = `
+                        <div class="summary-item">
+                            <h3>💰 Total Income</h3>
+                            <h2>$${data.summary.total_income}</h2>
+                        </div>
+                        <div class="summary-item">
+                            <h3>💸 Total Expense</h3>
+                            <h2>$${data.summary.total_expense}</h2>
+                        </div>
+                        <div class="summary-item">
+                            <h3>📊 Net Balance</h3>
+                            <h2>$${data.summary.net_balance}</h2>
+                        </div>
+                        <div class="summary-item">
+                            <h3>📝 Transactions</h3>
+                            <h2>${data.summary.total_transactions}</h2>
+                        </div>
+                    `;
+                    document.getElementById('summary').innerHTML = summaryHtml;
+                    
+                    // Display categories
+                    let categoriesHtml = '';
+                    data.category_breakdown.forEach(cat => {
+                        categoriesHtml += `
+                            <tr>
+                                <td>${cat.type}</td>
+                                <td>${cat.category}</td>
+                                <td class="${cat.type}">$${cat.total}</td>
+                                <td>${cat.count}</td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('categories').innerHTML += categoriesHtml;
+                    
+                    // Display recent activity
+                    let recentHtml = '';
+                    data.recent_activity.forEach(t => {
+                        recentHtml += `
+                            <tr>
+                                <td>${t.date}</td>
+                                <td class="${t.type}">${t.type}</td>
+                                <td>${t.category}</td>
+                                <td class="${t.type}">$${t.amount}</td>
+                                <td>${t.description || '-'}</td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('recent').innerHTML += recentHtml;
+                } else {
+                    document.getElementById('loginStatus').innerHTML = `<p style="color:red">❌ Failed to load dashboard</p>`;
+                }
+            } catch (error) {
+                document.getElementById('loginStatus').innerHTML = `<p style="color:red">❌ Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
