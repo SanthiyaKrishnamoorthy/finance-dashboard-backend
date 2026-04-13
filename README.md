@@ -24,9 +24,8 @@
 13. [Security Features](#-security-features)
 14. [Database Schema](#-database-schema)
 15. [Future Improvements](#-future-improvements)
-16. [Assignment Checklist](#-assignment-checklist)
 17. [Author](#-author)
-18. [License](#-license)
+
 
 ---
 
