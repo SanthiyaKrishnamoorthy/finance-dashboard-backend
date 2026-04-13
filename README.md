@@ -871,31 +871,6 @@ When you first run the server, sample data is automatically created:
 
 ---
 
-## 📝 Assignment Checklist
-
-| Requirement | Status | Implementation Details |
-|-------------|--------|----------------------|
-| **1. User and Role Management** | ✅ Complete | JWT authentication with 3 roles (Viewer, Analyst, Admin) |
-| **2. Financial Records Management** | ✅ Complete | Full CRUD operations with filtering |
-| **3. Dashboard Summary APIs** | ✅ Complete | Analytics endpoints with date filtering |
-| **4. Access Control Logic** | ✅ Complete | Middleware-based RBAC |
-| **5. Validation & Error Handling** | ✅ Complete | express-validator + proper status codes |
-| **6. Data Persistence** | ✅ Complete | SQLite database with indexes |
-| **7. API Documentation** | ✅ Complete | Swagger/OpenAPI + Postman collection |
-| **8. Code Quality** | ✅ Complete | MVC pattern, separation of concerns |
-| **9. Testing** | ✅ Complete | cURL commands + Postman collection |
-
-### Bonus Features Implemented
-
-- ✅ Interactive Swagger UI documentation
-- ✅ Postman collection for easy testing
-- ✅ Automatic database seeding
-- ✅ Comprehensive error messages
-- ✅ Request/response logging
-- ✅ Health check endpoint
-
----
-
 ## 👨‍💻 Author
 
 **Santhiya K**
@@ -904,9 +879,6 @@ When you first run the server, sample data is automatically created:
 |--------|-------------|
 | **Email** | sandkrish3511@gmail.com |
 | **Project** | Finance Data Processing and Access Control Backend |
-| **Position** | Backend Developer Intern (Applicant) |
-| **Assignment** | Backend Developer Intern Assignment |
-| **Date** | April 2024 |
 
 ### Development Approach
 
@@ -916,15 +888,7 @@ This project was built with:
 - **Security First** - Authentication and authorization at every level
 - **Documentation Driven** - API docs before implementation
 
----
-## 🙏 Acknowledgments
 
-- Assignment provided by the hiring company
-- Built with modern Node.js best practices
-- Designed with scalability and maintainability in mind
-- Special thanks to the open-source community
-
----
 
 ## 📞 Support & Contact
 
@@ -932,7 +896,6 @@ For issues or questions regarding this implementation:
 
 | Resource | Link/Method |
 |----------|-------------|
-| **GitHub Issues** | [Create an issue](https://github.com/YOUR_USERNAME/finance-backend-assignment/issues) |
 | **Email** | sandkrish3511@gmail.com |
 | **API Documentation** | http://localhost:3000/api-docs (when running) |
 | **Postman Collection** | Included in repository |
